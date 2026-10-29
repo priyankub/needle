@@ -6,6 +6,8 @@ on your network becomes a Roon remote: a laptop, an Android tablet, a phone, or 
 old iPad on the wall. The client is plain ES5 with no build step, so it still runs
 on iOS 9.
 
+Install it once, then open `http://<your server>:8080` in any browser to control Roon.
+
 ![Albums](docs/albums.jpg)
 
 | | |
@@ -84,9 +86,20 @@ docker run -d --name needle --restart unless-stopped \
   ghcr.io/priyankub/needle:latest
 ```
 
-Then, in Roon, open **Settings → Extensions** and click **Enable** next to
-**Needle**, and browse to `http://<docker host>:8080`. Images are built for amd64 and
-arm64 (Raspberry Pi 4/5).
+Images are built for amd64 and arm64 (Raspberry Pi 4/5).
+
+### Then
+
+1. In Roon, open **Settings → Extensions** and click **Enable** next to **Needle**.
+2. On any device on your network, open a browser and go to the address of the
+   machine running Needle, port 8080:
+
+   ```
+   http://192.168.1.20:8080
+   ```
+
+   (use your Docker host's IP). That's it: that browser is now a Roon remote. On a
+   phone or tablet, use **Add to Home Screen** and it opens full screen like an app.
 
 **Without Docker:** Node.js 18 or later.
 
