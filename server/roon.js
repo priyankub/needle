@@ -105,19 +105,30 @@ class Roon extends EventEmitter {
 
     _connect() {
         log.info(`roon: connecting to ${config.roon_host}:${config.roon_port}`);
-        let opened = false;
+        this.last_attempt = Date.now();
+        let opened = false, retrying = false;
+        const retry = (why) => {
+            if (retrying) return;
+            retrying = true;
+            this.socket_open = false;
+            clearTimeout(open_timer);
+            const delay = opened ? 1000 : this.reconnect_delay;
+            this.reconnect_delay = Math.min(this.reconnect_delay * 2, 30000);
+            log.warn(`roon: ${why}, retrying in ${delay / 1000}s`);
+            setTimeout(() => this._connect(), delay);
+        };
+        // node-roon-api only calls onclose for a socket that opened. An attempt that is
+        // refused (the Core restarting after an update) or never answers would otherwise
+        // end the retry loop for good.
         const moo = this.api.ws_connect({
             host: config.roon_host,
             port: config.roon_port,
-            onclose: () => {
-                const delay = opened ? 1000 : this.reconnect_delay;
-                this.reconnect_delay = Math.min(this.reconnect_delay * 2, 30000);
-                log.warn(`roon: connection closed, retrying in ${delay / 1000}s`);
-                setTimeout(() => this._connect(), delay);
-            }
+            onclose: () => retry("connection closed"),
+            onerror: () => { if (!opened) { moo.transport.close(); retry("connection failed"); } }
         });
+        const open_timer = setTimeout(() => { moo.transport.close(); retry("connection timed out"); }, 15000);
         const onopen = moo.transport.onopen;
-        moo.transport.onopen = () => { opened = true; this.reconnect_delay = 1000; onopen(); };
+        moo.transport.onopen = () => { opened = this.socket_open = true; clearTimeout(open_timer); this.reconnect_delay = 1000; onopen(); };
     }
 
     _core_found(core) {
@@ -218,6 +229,14 @@ class Roon extends EventEmitter {
         if (this.core) this.status_text = `Connected to ${this.core.display_name}. ${this.clients} open client${this.clients === 1 ? "" : "s"}.`;
         else if (this.was_connected) this.status_text = "Reconnecting to the Roon Core…";
         this.svc_status.set_status(this.status_text, false);
+    }
+
+    // True when there is no Core and the reconnect loop has stopped trying. Attempts are
+    // at most 45s apart (30s backoff + 15s open timeout), so a longer gap means it died.
+    // A Core that is merely down, or an open socket waiting to be enabled in Roon, is not
+    // a fault: the UI says what it is waiting for.
+    stalled() {
+        return !!config.roon_host && !this.core && !this.socket_open && Date.now() - (this.last_attempt || 0) > 60000;
     }
 
     core_info() {

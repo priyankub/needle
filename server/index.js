@@ -90,7 +90,10 @@ async function handle(req, res) {
     const url = new URL(req.url, "http://x");
     const p = url.pathname;
 
-    if (p === "/healthz") return json(res, 200, { ok: true, core: roon.core_info().connected });
+    if (p === "/healthz") {
+        const stalled = roon.stalled();
+        return json(res, stalled ? 503 : 200, { ok: !stalled, core: roon.core_info().connected });
+    }
 
     // ---- public: pairing ----
     if (PUBLIC_FILES[p] && req.method === "GET") {
