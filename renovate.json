@@ -1,6 +1,46 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
+  "extends": ["config:recommended"],
+  "automergeType": "pr",
+  "automergeStrategy": "squash",
+  "platformAutomerge": false,
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 10,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true,
+    "schedule": ["before 6am on monday"]
+  },
+  "packageRules": [
+    {
+      "description": "Minor, patch, digest and pin updates merge themselves once CI passes",
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin", "pinDigest"],
+      "automerge": true
+    },
+    {
+      "description": "npm releases wait 3 days before automerge, in case a bad release gets pulled",
+      "matchDatasources": ["npm"],
+      "minimumReleaseAge": "3 days"
+    },
+    {
+      "description": "GitHub Actions, majors included, as one PR: CI runs the workflow itself",
+      "matchManagers": ["github-actions"],
+      "matchDepNames": ["!node"],
+      "groupName": "GitHub Actions",
+      "automerge": true
+    },
+    {
+      "description": "Node.js majors (base image and CI) get a human look",
+      "matchDepNames": ["node"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "Node.js",
+      "automerge": false
+    },
+    {
+      "description": "Roon API libraries: CI can't tell if playback still works, so review these",
+      "matchPackageNames": ["/^node-roon-api/"],
+      "groupName": "Roon API",
+      "automerge": false
+    }
   ]
 }
