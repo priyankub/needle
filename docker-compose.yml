@@ -1,0 +1,23 @@
+# Needle: a web controller for Roon.
+#   docker compose up -d
+# then enable "Needle" in Roon under Settings → Extensions and open http://<this host>:8080
+services:
+  needle:
+    image: ghcr.io/priyankub/needle:latest
+    container_name: needle
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      # Your Roon Core's IP address. Leave it empty to find the Core by discovery,
+      # which works when Needle and the Core are on the same network segment.
+      ROON_HOST: "192.168.1.10"
+      TZ: "Etc/UTC"
+    volumes:
+      - needle-data:/data
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+
+volumes:
+  needle-data:

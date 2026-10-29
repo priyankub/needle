@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Needle · Pair this device</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Needle">
+<meta name="theme-color" content="#121216">
+<link rel="apple-touch-icon" href="/link/icon-180.png">
+<link rel="icon" href="/link/icon-192.png">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: rgba(0,0,0,0); }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: #121216; color: #f2f2f5;
+    font: 16px/1.4 -apple-system, "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center;
+    padding: 24px;
+  }
+  .card { width: 100%; max-width: 420px; }
+  .mark { width: 44px; height: 44px; border-radius: 50%; background: #8b7bff; box-shadow: inset 0 0 0 12px #121216, inset 0 0 0 16px #8b7bff; margin-bottom: 20px; }
+  h1 { margin: 0 0 8px; font-size: 28px; }
+  p { color: #a4a4b0; margin: 0 0 22px; }
+  label { display: block; font-size: 13px; color: #a4a4b0; margin: 0 0 6px; }
+  input {
+    width: 100%; height: 52px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: #1a1a20; color: #f2f2f5;
+    padding: 0 14px; font: inherit; font-size: 18px; margin-bottom: 16px; outline: none; -webkit-appearance: none;
+  }
+  input.code { font-size: 30px; letter-spacing: 10px; text-align: center; font-weight: 700; }
+  input:focus { border-color: #8b7bff; }
+  button {
+    width: 100%; height: 52px; border: 0; border-radius: 26px; background: #8b7bff; color: #fff; font: inherit; font-weight: 700; font-size: 17px; cursor: pointer;
+  }
+  button:disabled { opacity: 0.5; }
+  .err { color: #ff6b6b; min-height: 22px; margin: 12px 0 0; }
+  .alt { display: block; text-align: center; margin-top: 26px; color: #a4a4b0; font-size: 14px; }
+  .alt a { color: #a99dff; }
+  ol { color: #a4a4b0; padding-left: 20px; margin: 0 0 24px; }
+  ol li { margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="mark"></div>
+  <h1>Pair this device</h1>
+  <ol>
+    <li>On a phone or computer that's signed in to Needle, open <b>Settings → Pair a device</b>.</li>
+    <li>Type the 6-digit code here.</li>
+  </ol>
+  <form id="f" action="#">
+    <label for="code">Pairing code</label>
+    <input id="code" class="code" type="tel" inputmode="numeric" maxlength="7" autocomplete="off" placeholder="000000">
+    <label for="name">Name for this device</label>
+    <input id="name" type="text" maxlength="60" autocomplete="off" placeholder="Living room iPad">
+    <button id="go" type="submit">Pair</button>
+    <div id="err" class="err"></div>
+  </form>
+  <div class="alt">Signed-in phones and computers don't need this. <a href="/link/forget">Sign in with your account</a></div>
+</div>
+<script>
+(function () {
+  "use strict";
+  var KEY = "needle.device_token";
+  function get() { try { return window.localStorage.getItem(KEY); } catch (e) { return null; } }
+  function set(v) { try { window.localStorage.setItem(KEY, v); } catch (e) { /* private mode */ } }
+  function del() { try { window.localStorage.removeItem(KEY); } catch (e) { /* private mode */ } }
+  function post(url, body, cb) {
+    var x = new XMLHttpRequest();
+    x.open("POST", url, true);
+    x.setRequestHeader("Content-Type", "application/json");
+    x.onreadystatechange = function () {
+      if (x.readyState !== 4) return;
+      var d = {};
+      try { d = JSON.parse(x.responseText); } catch (e) { /* not json */ }
+      cb(x.status === 200 ? null : (d.error || "Something went wrong (" + x.status + ")"), d);
+    };
+    x.send(JSON.stringify(body));
+  }
+
+  // Home-screen web apps on old iOS keep cookies apart from Safari and
+  // sometimes lose them; the token kept here gets the cookie back.
+  var saved = get();
+  if (saved) {
+    post("/link/restore", { token: saved }, function (err) {
+      if (!err) location.replace("/");
+      else del();
+    });
+  }
+
+  var f = document.getElementById("f");
+  var code = document.getElementById("code");
+  var name = document.getElementById("name");
+  var go = document.getElementById("go");
+  var errBox = document.getElementById("err");
+  f.addEventListener("submit", function (e) {
+    e.preventDefault();
+    errBox.textContent = "";
+    var c = code.value.replace(/\D/g, "");
+    if (c.length !== 6) { errBox.textContent = "The code has 6 digits."; return; }
+    go.disabled = true;
+    post("/link/claim", { code: c, name: name.value }, function (err, d) {
+      go.disabled = false;
+      if (err) { errBox.textContent = err; return; }
+      set(d.token);
+      location.replace("/");
+    });
+  });
+})();
+</script>
+</body>
+</html>

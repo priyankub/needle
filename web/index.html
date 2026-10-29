@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Needle</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Needle">
+<meta name="theme-color" content="#121216">
+<link rel="apple-touch-icon" href="/link/icon-180.png">
+<link rel="icon" href="/link/icon-192.png">
+<link rel="manifest" href="/link/manifest.webmanifest" crossorigin="use-credentials">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<div id="app">
+  <aside id="nav">
+    <div class="brand"><span class="brand-mark"></span>Needle</div>
+    <form id="search-form" class="nav-search" action="#">
+      <input id="search" type="search" placeholder="Search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    </form>
+    <nav id="nav-items"></nav>
+    <div class="nav-foot">
+      <button id="btn-settings" class="nav-link" type="button"><span class="ic ic-gear"></span>Settings</button>
+    </div>
+  </aside>
+  <div id="nav-scrim"></div>
+
+  <main id="main">
+    <header id="topbar">
+      <button id="btn-menu" class="icon-btn" type="button" aria-label="Menu"><span class="ic ic-menu"></span></button>
+      <button id="btn-back" class="icon-btn" type="button" aria-label="Back"><span class="ic ic-back"></span></button>
+      <h1 id="title"></h1>
+      <button id="btn-view" class="icon-btn" type="button" aria-label="Grid or list"><span class="ic ic-grid"></span></button>
+    </header>
+    <div id="content"></div>
+  </main>
+
+  <footer id="bar">
+    <div id="bar-progress"><div id="bar-progress-fill"></div></div>
+    <div class="bar-inner">
+      <div id="bar-track" class="bar-track">
+        <div id="bar-art" class="art"></div>
+        <div class="bar-text">
+          <div id="bar-line1" class="line1"></div>
+          <div id="bar-line2" class="line2"></div>
+        </div>
+      </div>
+      <div class="bar-transport">
+        <button class="icon-btn hide-narrow" data-ctl="previous" type="button" aria-label="Previous"><span class="ic ic-prev"></span></button>
+        <button class="icon-btn play-btn" data-ctl="playpause" type="button" aria-label="Play or pause"><span class="ic ic-play"></span></button>
+        <button class="icon-btn" data-ctl="next" type="button" aria-label="Next"><span class="ic ic-next"></span></button>
+      </div>
+      <div class="bar-right">
+        <div id="bar-volume" class="volume"></div>
+        <button id="btn-zone" class="zone-btn" type="button"><span class="ic ic-speaker"></span><span id="zone-name" class="zone-label">No zone</span></button>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<section id="np" class="np">
+  <div id="np-bg" class="np-bg"></div>
+  <div class="np-shade"></div>
+  <header class="np-top">
+    <button id="np-close" class="icon-btn" type="button" aria-label="Close"><span class="ic ic-down"></span></button>
+    <button id="np-zone" class="zone-btn" type="button"><span class="ic ic-speaker"></span><span id="np-zone-name" class="zone-label"></span></button>
+    <button id="np-queue-toggle" class="icon-btn" type="button" aria-label="Queue"><span class="ic ic-queue"></span></button>
+  </header>
+  <div class="np-body">
+    <div class="np-main">
+      <div id="np-art" class="np-art art"></div>
+      <div class="np-meta">
+        <div id="np-line1" class="np-line1"></div>
+        <div id="np-line2" class="np-line2"></div>
+        <div id="np-line3" class="np-line3"></div>
+      </div>
+      <div class="np-seek">
+        <span id="np-pos" class="time">0:00</span>
+        <div id="np-seekbar" class="slider"><div class="slider-track"><div class="slider-fill"></div></div><div class="slider-knob"></div></div>
+        <span id="np-len" class="time">0:00</span>
+      </div>
+      <div class="np-transport">
+        <button id="np-shuffle" class="icon-btn toggle" type="button" aria-label="Shuffle"><span class="ic ic-shuffle"></span></button>
+        <button class="icon-btn big" data-ctl="previous" type="button" aria-label="Previous"><span class="ic ic-prev"></span></button>
+        <button class="icon-btn huge play-btn" data-ctl="playpause" type="button" aria-label="Play or pause"><span class="ic ic-play"></span></button>
+        <button class="icon-btn big" data-ctl="next" type="button" aria-label="Next"><span class="ic ic-next"></span></button>
+        <button id="np-loop" class="icon-btn toggle" type="button" aria-label="Repeat"><span class="ic ic-loop"></span><span class="loop-one">1</span></button>
+      </div>
+      <div class="np-extra">
+        <button id="np-radio" class="pill toggle" type="button">Roon Radio</button>
+        <div id="np-volume" class="volume wide"></div>
+      </div>
+    </div>
+    <aside id="np-queue" class="np-queue">
+      <div class="np-queue-head">Queue</div>
+      <div id="queue-list" class="queue-list"></div>
+    </aside>
+  </div>
+</section>
+
+<div id="sheet-wrap" class="sheet-wrap">
+  <div id="sheet-scrim" class="sheet-scrim"></div>
+  <div id="sheet" class="sheet"></div>
+</div>
+
+<div id="toast" class="toast"></div>
+<div id="offline" class="offline"><span class="spinner"></span><span id="offline-text">Connecting…</span></div>
+
+<script src="/app.js"></script>
+</body>
+</html>

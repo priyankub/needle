@@ -1,0 +1,26 @@
+{
+  "name": "needle",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A web controller for Roon that also runs on old tablets",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "node-roon-api": "github:roonlabs/node-roon-api#055dae6c2ac45b6c738aa3b9e5ac1fd722ed60e8",
+    "node-roon-api-browse": "github:roonlabs/node-roon-api-browse#98adcbaba3a30fd6ce109c1f04cd361536143222",
+    "node-roon-api-image": "github:roonlabs/node-roon-api-image#a5f0efaf2dfb5457e91abe326c3a40d865131d32",
+    "node-roon-api-status": "github:roonlabs/node-roon-api-status#504c918d6da267e03fbb4337befa71ca3d3c7526",
+    "node-roon-api-transport": "github:roonlabs/node-roon-api-transport#2ee60008a4cdb90c34ff3de58bb4b949067f1d20",
+    "ws": "8.18.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/priyankub/needle.git"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
