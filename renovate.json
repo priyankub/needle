@@ -3,7 +3,7 @@
   "extends": ["config:recommended"],
   "automergeType": "pr",
   "automergeStrategy": "squash",
-  "platformAutomerge": false,
+  "platformAutomerge": true,
   "prHourlyLimit": 0,
   "prConcurrentLimit": 10,
   "lockFileMaintenance": {
